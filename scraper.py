@@ -2,12 +2,10 @@ from lxml import html
 from lxml.html import builder as E
 import requests
 import re
+import settings
 
 BASE_URL = 'http://www.emuparadise.me'
-
-LIST_URL = "/Nintendo_DS_ROMs/List-All-Titles/32"
-
-patterns = [ '\(e\)', '\(E\)', '\(eu\)', '\(EU\)', '\(Eu\)' ]
+LIST_URL = settings.settings['listUrl']
 
 RELEASE_NO_REGEX = re.compile(r'(?<=Nintendo DS Release #)\d+')
 
@@ -24,9 +22,18 @@ def get_games():
     bucket_elems = tree.find_class('gamelist')
 
     game_list = []
+    full_count = 0
+    count = 0
 
     for elem in bucket_elems:
-        for pattern in patterns:
+        for pattern in settings.settings['patterns']:
+            if re.search(pattern, elem.text_content()):
+                full_count += 1
+
+    print('Total of ' + str(full_count) + ' games')
+
+    for elem in bucket_elems:
+        for pattern in settings.settings['patterns']:
             if re.search(pattern, elem.text_content()):
                 game_page = requests.Session().get(BASE_URL + elem.attrib['href'])
                 king_dict = {}
@@ -36,7 +43,12 @@ def get_games():
                 king_dict = add_dict(king_dict, get_ratings(game_page))
                 king_dict = add_dict(king_dict, get_pictures(game_page))
 
-                print(king_dict)
+                count += 1
+
+                game_list.append(king_dict)
+                print('Added Game ' + str(count) + '/' + str(full_count) + ': ' + king_dict['name'])
+
+    print(game_list)
 
 
 def add_dict(initial, add_dict):
