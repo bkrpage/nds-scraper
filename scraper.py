@@ -1,4 +1,5 @@
 from lxml import html
+from lxml.html import builder as E
 import requests
 import re
 
@@ -10,56 +11,81 @@ patterns = [ '\(e\)', '\(E\)', '\(eu\)', '\(EU\)', '\(Eu\)' ]
 
 RELEASE_NO_REGEX = re.compile(r'(?<=Nintendo DS Release #)\d+')
 
-IMG_BASE_URL       = 'http://s.emuparadise.org/ndsbox1/'
-IMG_ICON_SUFFIX    = 'i.gif'
-IMG_BOX_SUFFIX     = 'a.jpg'
-IMG_SCREEN_SUFFIX  = 'b.jpg'
+IMG_BASE_URL = 'http://s.emuparadise.org/ndsbox1/'
+IMG_ICON_SUFFIX = 'i.gif'
+IMG_BOX_SUFFIX = 'a.jpg'
+IMG_SCREEN_SUFFIX = 'b.jpg'
 
-def getGames():
+
+def get_games():
     page = requests.Session().get(BASE_URL + LIST_URL)
 
     tree = html.fromstring(page.text)
     bucket_elems = tree.find_class('gamelist')
 
+    game_list = []
+
     for elem in bucket_elems:
         for pattern in patterns:
             if re.search(pattern, elem.text_content()):
                 game_page = requests.Session().get(BASE_URL + elem.attrib['href'])
-                doc_line  = '\'=HYPERLINK("' + BASE_URL + elem.attrib['href'] + '-download","' + elem.text_content() + '") ; '
-                doc_line += getRatings(game_page)
-                doc_line += getPictures(game_page)
-                print(doc_line)
+                king_dict = {}
+                game_details = {'name': elem.text_content(), 'link': BASE_URL + elem.attrib['href'] + '-download'}
+
+                king_dict = add_dict(king_dict, game_details)
+                king_dict = add_dict(king_dict, get_ratings(game_page))
+                king_dict = add_dict(king_dict, get_pictures(game_page))
+
+                print(king_dict)
 
 
-def getRatings(game_page):
+def add_dict(initial, add_dict):
+    for key, value in add_dict.items():
+        initial[key] = value
+
+    return initial
+
+
+def get_ratings(game_page):
     tree = html.fromstring(game_page.text)
 
     rating = tree.findall(".//span[@itemprop='ratingValue']")[0].text_content()
     rating_count = tree.findall(".//span[@itemprop='ratingCount']")[0].text_content()
 
-    return '\'' + rating + ';\'' + rating_count + ';'
+    ratings = {
+        'rating': rating,
+        'rating_count': rating_count
+    }
+
+    return ratings
 
 
-def getPictures(game_page):
+def get_pictures(game_page):
     tree = html.fromstring(game_page.text)
 
     img_div = tree.find_class('download-link')[0].text_content()
 
-    img_string = ''
     game_no = re.search(RELEASE_NO_REGEX, img_div)
     if game_no:
-        icon_url       = IMG_BASE_URL + game_no.group(0) + IMG_ICON_SUFFIX
-        boxart_url     = IMG_BASE_URL + game_no.group(0)  + IMG_BOX_SUFFIX
-        screenshot_url = IMG_BASE_URL + game_no.group(0)  + IMG_SCREEN_SUFFIX
+        icon_url = IMG_BASE_URL + game_no.group(0) + IMG_ICON_SUFFIX
+        boxart_url = IMG_BASE_URL + game_no.group(0) + IMG_BOX_SUFFIX
+        screenshot_url = IMG_BASE_URL + game_no.group(0) + IMG_SCREEN_SUFFIX
 
-        img_string  = '\'=HYPERLINK("' + icon_url + '", "Icon") ; '
-        img_string += '\'=HYPERLINK("' + boxart_url + '", "Box Art") ; '
-        img_string += '\'=HYPERLINK("' + screenshot_url + '", "Screenshot") ; '
+        images_urls = {
+            'icon': icon_url,
+            'boxart': boxart_url,
+            'screenshot': screenshot_url
+        }
+
     else:
-        img_string = '\';\';\';'
+        images_urls = {
+            'icon': '',
+            'boxart': '',
+            'screenshot': ''
+        }
 
-    return img_string
+    return images_urls
 
 
 if __name__ == '__main__':
-    getGames()
+    get_games()
