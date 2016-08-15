@@ -1,0 +1,23 @@
+<html>
+<head>
+    <title>Test</title>
+</head>
+<body>
+    <table>
+        <thead>
+            <th> Icon</th>
+            <th> Name</th>
+            <th> Rating</th>
+            <th> Rating Count</th>
+        </thead>
+        {% for dict in game_list %}
+        <tr>
+            <td> <img src="{{ dict['icon'] }}" alt="{{ dict['name'] }} icon" width="16" height="16"/></td>
+            <td> <a href="{{ dict['link'] }}">{{ dict['name'] }}</a></td>
+            <td> {{ dict["rating"] }}</td>
+            <td> {{ dict["rating_count"] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

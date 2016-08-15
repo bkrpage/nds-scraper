@@ -1,6 +1,6 @@
 from lxml import html
 from lxml.html import builder as E
-from jinja2 import Environment
+from jinja2 import Environment, PackageLoader
 import requests
 import re
 import settings
@@ -50,6 +50,9 @@ def get_games():
 
                 game_list.append(king_dict)
                 print('Added Game ' + str(count) + '/' + str(full_count) + ': ' + king_dict['name'])
+
+        if count >= 100: # Just to limit the amount of time between test runs - instead of getting all 2000+ links etc
+            break
 
     generate_html(game_list)
 
@@ -102,31 +105,12 @@ def get_pictures(game_page):
     return images_urls
 
 def generate_html(game_list):
+    env = Environment(loader=PackageLoader('scraper', 'templates'))
+    template = env.get_template('game_list_template.html')
+    html = template.render(game_list=game_list)
 
-    HTML = """
-    <html>
-    <head>
-    <title>Test</title>
-    </head>
-    <body>
-    <table>
-        <thead>
-            <th> Name </th>
-            <th> Rating </th>
-            <th> Rating Count </th>
-        </thead>
-        {% for dict in game_list %}
-        <tr>
-            <td> {{ dict["name"] }} </td>
-            <td> {{ dict["rating"] }} </td>
-            <td> {{ dict["rating_count"] }} </td>
-        </tr>
-        {% endfor %}
-    </table>
-    </body>
-    </html>
-    """
-    print Environment().from_string(HTML).render(game_list=game_list)
+    with open('output.html', 'w') as f:
+        f.write(html)
 
 if __name__ == '__main__':
     get_games()
