@@ -1,6 +1,4 @@
 from lxml import html
-from lxml.html import builder as E
-from jinja2 import Environment, PackageLoader
 import requests
 import re
 import settings
@@ -16,6 +14,7 @@ IMG_ICON_SUFFIX = 'i.gif'
 IMG_BOX_SUFFIX = 'a.jpg'
 IMG_SCREEN_SUFFIX = 'b.jpg'
 
+WEIGHTED_RATING_LIMIT = 5
 
 def get_games():
     page = requests.Session().get(BASE_URL + LIST_URL)
@@ -40,7 +39,10 @@ def get_games():
                 name_detagged = re.sub(TAG_REGEX, '', elem.text_content())
                 game_page = requests.Session().get(BASE_URL + elem.attrib['href'])
 
-                game_details = {'name': name_detagged, 'link': BASE_URL + elem.attrib['href'] + '-download'}
+                game_details = {
+                    'name': name_detagged,
+                    'link': BASE_URL + elem.attrib['href'] + '-download'
+                }
 
                 king_dict = add_dict({}, game_details)
                 king_dict = add_dict(king_dict, get_ratings(game_page))
@@ -51,14 +53,14 @@ def get_games():
                 game_list.append(king_dict)
                 print('Added Game ' + str(count) + '/' + str(full_count) + ': ' + king_dict['name'])
 
-        if count >= 100: # Just to limit the amount of time between test runs - instead of getting all 2000+ links etc
+        if count >= 100:  # Just to limit the amount of time between test runs - instead of getting all 2000+ links
             break
 
-    generate_html(game_list)
+    return game_list
 
 
-def add_dict(initial, add_dict):
-    for key, value in add_dict.items():
+def add_dict(initial, add):
+    for key, value in add.items():
         initial[key] = value
 
     return initial
@@ -92,25 +94,15 @@ def get_pictures(game_page):
         images_urls = {
             'icon': icon_url,
             'boxart': boxart_url,
-            'screenshot': screenshot_url
+            'screenshot': screenshot_url,
+            'id': game_no.group(0)
         }
-
     else:
         images_urls = {
             'icon': '',
             'boxart': '',
-            'screenshot': ''
+            'screenshot': '',
+            'id': ''
         }
 
     return images_urls
-
-def generate_html(game_list):
-    env = Environment(loader=PackageLoader('scraper', 'templates'))
-    template = env.get_template('game_list_template.html')
-    html = template.render(game_list=game_list)
-
-    with open('output.html', 'w') as f:
-        f.write(html)
-
-if __name__ == '__main__':
-    get_games()

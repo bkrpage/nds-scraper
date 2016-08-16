@@ -1,17 +1,20 @@
 <html>
 <head>
     <title>Test</title>
+    <script src="{{ url_for('static', filename='js/sorttable.js') }}"></script>
 </head>
 <body>
-    <table>
+    <table class="sortable">
         <thead>
+            <th> ID</th>
             <th> Icon</th>
             <th> Name</th>
             <th> Rating</th>
             <th> Rating Count</th>
         </thead>
         {% for dict in game_list %}
-        <tr>
+        <tr id="{{ dict['id'] }}">
+            <td> {{ dict["id"] }}</td>
             <td> <img src="{{ dict['icon'] }}" alt="{{ dict['name'] }} icon" width="16" height="16"/></td>
             <td> <a href="{{ dict['link'] }}">{{ dict['name'] }}</a></td>
             <td> {{ dict["rating"] }}</td>
