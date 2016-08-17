@@ -8,6 +8,8 @@ LIST_URL = settings.settings['listUrl']
 
 RELEASE_NO_REGEX = re.compile(r'(?<=Nintendo DS Release #)\d+')
 TAG_REGEX = re.compile(r'(\(.+?\))')
+SPECIAL_REGEX = re.compile('[^A-Za-z0-9]+')
+DS_REGEX = re.compile('\b([ds|DS])\w+')
 
 IMG_BASE_URL = 'http://s.emuparadise.org/ndsbox1/'
 IMG_ICON_SUFFIX = 'i.gif'
@@ -15,6 +17,7 @@ IMG_BOX_SUFFIX = 'a.jpg'
 IMG_SCREEN_SUFFIX = 'b.jpg'
 
 WEIGHTED_RATING_LIMIT = 5
+
 
 def get_games():
     page = requests.Session().get(BASE_URL + LIST_URL)
@@ -36,13 +39,18 @@ def get_games():
     for elem in bucket_elems:
         for pattern in settings.settings['patterns']:
             if re.search(pattern, elem.text_content()):
+                
                 name_detagged = re.sub(TAG_REGEX, '', elem.text_content())
-                game_page = requests.Session().get(BASE_URL + elem.attrib['href'])
+                name_stripped = strip_special_lower(name_detagged)
 
                 game_details = {
+                    'id': count,
                     'name': name_detagged,
+                    'stripped_name': name_stripped,
                     'link': BASE_URL + elem.attrib['href'] + '-download'
                 }
+
+                game_page = requests.Session().get(BASE_URL + elem.attrib['href'])
 
                 king_dict = add_dict({}, game_details)
                 king_dict = add_dict(king_dict, get_ratings(game_page))
@@ -51,9 +59,10 @@ def get_games():
                 count += 1
 
                 game_list.append(king_dict)
-                print('Added Game ' + str(count) + '/' + str(full_count) + ': ' + king_dict['name'])
+                #  print('Added Game ' + str(count) + '/' + str(full_count) + ': ' + king_dict['name'])
+                print(game_details)
 
-        if count >= 100:  # Just to limit the amount of time between test runs - instead of getting all 2000+ links
+        if count >= 50:  # Just to limit the amount of time between test runs - instead of getting all 2000+ links
             break
 
     return game_list
@@ -64,6 +73,14 @@ def add_dict(initial, add):
         initial[key] = value
 
     return initial
+
+
+def strip_special_lower(string):
+    stripped_string = re.sub(DS_REGEX, '', string)
+    stripped_string = re.sub(SPECIAL_REGEX, '', stripped_string)
+    stripped_string = stripped_string.lower()
+
+    return stripped_string
 
 
 def get_ratings(game_page):
@@ -102,7 +119,11 @@ def get_pictures(game_page):
             'icon': '',
             'boxart': '',
             'screenshot': '',
-            'id': ''
+            'emu_id': ''
         }
 
     return images_urls
+
+
+if __name__ == "__main__":
+    get_games()
