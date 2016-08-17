@@ -12,21 +12,21 @@
             <div class="col-md-12">
                 <table class="sortable table">
                     <thead>
-                        <th> ID</th>
-                        <th> Emu ID</th>
-                        <th> Icon</th>
+                        <th class="text-center"> ID</th>
+                        <th class="text-center"> Emu ID</th>
+                        <th class="text-center"> Icon</th>
                         <th> Name</th>
-                        <th> Rating</th>
-                        <th> Rating Count</th>
+                        <th class="text-center"> Rating</th>
+                        <th class="text-center"> Rating Count</th>
                     </thead>
                     {% for dict in game_list %}
                     <tr id="{{ dict['id'] }}">
-                        <td> {{ dict["id"] }}</td>
-                        <td> {{ dict["emu_id"] }}</td>
-                        <td> <img src="{{ dict['icon'] }}" alt="{{ dict['name'] }} icon" width="16" height="16"/></td>
+                        <td class="text-center"> {{ dict["id"] }}</td>
+                        <td class="text-center"> {{ dict["emu_id"] }}</td>
+                        <td class="text-center"> <img src="{{ dict['icon'] }}" alt="{{ dict['name'] }} icon" width="16" height="16"/></td>
                         <td> <a href="{{ dict['link'] }}">{{ dict['name'] }}</a></td>
-                        <td> {{ dict["rating"] }}</td>
-                        <td> {{ dict["rating_count"] }}</td>
+                        <td class="text-center"> {{ dict["rating"] }}</td>
+                        <td class="text-center"> {{ dict["rating_count"] }}</td>
                     </tr>
                     {% endfor %}
                 </table>
