@@ -30,37 +30,35 @@ def get_games():
     count = 0
 
     for elem in bucket_elems:
-        for pattern in settings.settings['patterns']:
-            if re.search(pattern, elem.text_content()):
-                full_count += 1
+        if re.search(settings.settings['pattern'], elem.text_content()):
+            full_count += 1
 
     print('Total of ' + str(full_count) + ' games')
 
     for elem in bucket_elems:
-        for pattern in settings.settings['patterns']:
-            if re.search(pattern, elem.text_content()):
-                
-                name_detagged = re.sub(TAG_REGEX, '', elem.text_content())
-                name_stripped = strip_special_lower(name_detagged)
+        if re.search(settings.settings['pattern'], elem.text_content()):
 
-                game_details = {
-                    'id': count,
-                    'name': name_detagged,
-                    'stripped_name': name_stripped,
-                    'link': BASE_URL + elem.attrib['href'] + '-download'
-                }
+            name_detagged = re.sub(TAG_REGEX, '', elem.text_content())
+            name_stripped = strip_special_lower(name_detagged)
 
-                game_page = requests.Session().get(BASE_URL + elem.attrib['href'])
+            game_details = {
+                'id': count,
+                'name': name_detagged,
+                'stripped_name': name_stripped,
+                'link': BASE_URL + elem.attrib['href'] + '-download'
+            }
 
-                king_dict = add_dict({}, game_details)
-                king_dict = add_dict(king_dict, get_ratings(game_page))
-                king_dict = add_dict(king_dict, get_pictures(game_page))
+            game_page = requests.Session().get(BASE_URL + elem.attrib['href'])
 
-                count += 1
+            king_dict = add_dict({}, game_details)
+            king_dict = add_dict(king_dict, get_ratings(game_page))
+            king_dict = add_dict(king_dict, get_pictures(game_page))
 
-                game_list.append(king_dict)
-                #  print('Added Game ' + str(count) + '/' + str(full_count) + ': ' + king_dict['name'])
-                print(game_details)
+            count += 1
+
+            game_list.append(king_dict)
+            print('Added Game ' + str(count) + '/' + str(full_count) + ': ' + king_dict['name'])
+            # print(game_details)
 
         if count >= 50:  # Just to limit the amount of time between test runs - instead of getting all 2000+ links
             break
