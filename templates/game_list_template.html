@@ -1,26 +1,37 @@
 <html>
 <head>
     <title>Test</title>
-    <script src="{{ url_for('static', filename='js/sorttable.js') }}"></script>
+
+    <script src="https://cdn.jsdelivr.net/sorttable/2/sorttable.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
 </head>
 <body>
-    <table class="sortable">
-        <thead>
-            <th> ID</th>
-            <th> Icon</th>
-            <th> Name</th>
-            <th> Rating</th>
-            <th> Rating Count</th>
-        </thead>
-        {% for dict in game_list %}
-        <tr id="{{ dict['id'] }}">
-            <td> {{ dict["id"] }}</td>
-            <td> <img src="{{ dict['icon'] }}" alt="{{ dict['name'] }} icon" width="16" height="16"/></td>
-            <td> <a href="{{ dict['link'] }}">{{ dict['name'] }}</a></td>
-            <td> {{ dict["rating"] }}</td>
-            <td> {{ dict["rating_count"] }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <table class="sortable table">
+                    <thead>
+                        <th> ID</th>
+                        <th> Emu ID</th>
+                        <th> Icon</th>
+                        <th> Name</th>
+                        <th> Rating</th>
+                        <th> Rating Count</th>
+                    </thead>
+                    {% for dict in game_list %}
+                    <tr id="{{ dict['id'] }}">
+                        <td> {{ dict["id"] }}</td>
+                        <td> {{ dict["emu_id"] }}</td>
+                        <td> <img src="{{ dict['icon'] }}" alt="{{ dict['name'] }} icon" width="16" height="16"/></td>
+                        <td> <a href="{{ dict['link'] }}">{{ dict['name'] }}</a></td>
+                        <td> {{ dict["rating"] }}</td>
+                        <td> {{ dict["rating_count"] }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
