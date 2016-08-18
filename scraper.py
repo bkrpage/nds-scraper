@@ -67,7 +67,7 @@ def get_games():
         if count >= 50:  # Just to limit the amount of time between test runs - instead of getting all 2000+ links
             break
 
-    print '\nTOTAL DUPLICATES: ' + str(duplicate_count)
+    print('\nTOTAL DUPLICATES: ' + str(duplicate_count))
 
     return game_list
 
