@@ -1,0 +1,4 @@
+td.picture, th.picture {
+    max-width: 220px;
+    overflow: hidden;
+}

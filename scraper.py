@@ -64,8 +64,8 @@ def get_games():
             else:
                 duplicate_count += 1
 
-        #  if count >= 50:  # Just to limit the amount of time between test runs - instead of getting all 2000+ links
-        #      break
+        if count >= 50:  # Just to limit the amount of time between test runs - instead of getting all 2000+ links
+            break
 
     print '\nTOTAL DUPLICATES: ' + str(duplicate_count)
 
@@ -125,7 +125,7 @@ def get_pictures(game_page):
             'icon': icon_url,
             'boxart': boxart_url,
             'screenshot': screenshot_url,
-            'id': game_no.group(0)
+            'emu_id': game_no.group(0)
         }
     else:
         images_urls = {

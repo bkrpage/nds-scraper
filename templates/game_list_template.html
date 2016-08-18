@@ -5,6 +5,7 @@
     <script src="https://cdn.jsdelivr.net/sorttable/2/sorttable.min.js"></script>
 
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}"></link>
 </head>
 <body>
     <div class="container">
@@ -17,16 +18,20 @@
                         <th class="text-center"> Icon</th>
                         <th> Name</th>
                         <th class="text-center"> Rating</th>
-                        <th class="text-center"> Rating Count</th>
+                        <th class="text-center"> Count</th>
+                        <th class="text-center picture"> Box</th>
+                        <th class="text-center picture"> Screenshot</th>
                     </thead>
                     {% for dict in game_list %}
                     <tr id="{{ dict['id'] }}">
                         <td class="text-center"> {{ dict["id"] }}</td>
                         <td class="text-center"> {{ dict["emu_id"] }}</td>
-                        <td class="text-center"> <img src="{{ dict['icon'] }}" alt="{{ dict['name'] }} icon" width="16" height="16"/></td>
+                        <td class="text-center"> <img src="{{ dict['icon'] }}" alt="{{ dict['name'] }} icon" width="32" height="32"/></td>
                         <td> <a href="{{ dict['link'] }}">{{ dict['name'] }}</a></td>
                         <td class="text-center"> {{ dict["rating"] }}</td>
                         <td class="text-center"> {{ dict["rating_count"] }}</td>
+                        <td class="text-center picture"> <img src="{{ dict['boxart'] }}" alt="{{ dict['name'] }} Boxart" /></td>
+                        <td class="text-center picture"> <img src="{{ dict['screenshot'] }}" alt="{{ dict['name'] }} Screen" /></td>
                     </tr>
                     {% endfor %}
                 </table>
