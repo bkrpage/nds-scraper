@@ -5,7 +5,7 @@ td.picture, th.picture {
 
 img.boxart {
     border: #d6d6d6 solid 6px;
-    border-left: 0;
+    border-left: #E8E8E8 solid 1px;
     -webkit-border-radius: 2px;
     -webkit-border-top-right-radius: 7px;
     -webkit-border-bottom-right-radius: 7px;
@@ -15,4 +15,23 @@ img.boxart {
     border-radius: 2px;
     border-top-right-radius: 7px;
     border-bottom-right-radius: 7px;
+}
+
+.ds-screenshot{
+    width:  208px;
+    height: 158px;
+    border: 4px solid #2d2d2d;
+    -webkit-border-radius: 3px;
+    -moz-border-radius:    3px;
+    border-radius:         3px;
+    background-repeat: no-repeat;
+}
+
+.ds-screenshot.ds-top{
+    background-position: 0 0;
+    margin-bottom: 5px;
+}
+
+.ds-screenshot.ds-bottom{
+    background-position: 0 -150px;
 }

@@ -36,7 +36,12 @@
                         <td class="text-center"> {{ dict["rating"] }}</td>
                         <td class="text-center"> {{ dict["rating_count"] }}</td>
                         <td class="text-center picture"> <img src="{{ dict['boxart'] }}" class="boxart" alt="{{ dict['id'] }} Boxart" onerror="imgError(this);"/></td>
-                        <td class="text-center picture"> <img src="{{ dict['screenshot'] }}" alt="{{ dict['id'] }} Screen" onerror="imgError(this);"/></td>
+                        <td class="text-center picture">
+                            <div class="ds-console">
+                                <div class="ds-screenshot ds-top" style="background-image: url({{ dict['screenshot'] }})"> </div>
+                                <div class="ds-screenshot ds-bottom"  style="background-image: url({{ dict['screenshot'] }})"> </div>
+                            </div>
+                        </td>
                     </tr>
                     {% endfor %}
                 </table>
